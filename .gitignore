@@ -1,0 +1,32 @@
+# Secrets and credentials
+secrets/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+google_token.json
+
+# Runtime data and PII
+runtime/*
+!runtime/.gitkeep
+*.csv
+*.xlsx
+*.jsonl
+*ledger*.json
+*audit*.json
+subscription_dry_run_latest.*
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "source": "FF sales API",
+  "allowed_yclients_subscription_types": [
+    "Индивидуальная консультация",
+    "Групповая консультация",
+    "Консультации (3 шт.)",
+    "Консультации (5 шт.)",
+    "Консультации (8 шт.)"
+  ],
+  "ordinary_course_rules": [
+    {
+      "when": "course.name is not one of the consultation-package course names and userCourse.kolPersonalConsultations > 0",
+      "target_subscription_type": "Индивидуальная консультация",
+      "quantity_source": "userCourse.kolPersonalConsultations"
+    },
+    {
+      "when": "course.name is not one of the consultation-package course names and userCourse.kolGroupConsultations > 0",
+      "target_subscription_type": "Групповая консультация",
+      "quantity_source": "userCourse.kolGroupConsultations"
+    }
+  ],
+  "consultation_package_rules": {
+    "Пакет консультаций 3": {
+      "target_subscription_type": "Консультации (3 шт.)",
+      "quantity": 3
+    },
+    "Пакет консультаций 5": {
+      "target_subscription_type": "Консультации (5 шт.)",
+      "quantity": 5
+    },
+    "Пакет консультаций 8": {
+      "target_subscription_type": "Консультации (8 шт.)",
+      "quantity": 8
+    }
+  },
+  "client_sync": {
+    "company": "Formfactor",
+    "apply_to": [
+      "new_clients",
+      "existing_clients_only_after_zero_subscription_history_is_proven"
+    ],
+    "name_format": "{user.name} @{user.tgUsername}",
+    "phone_source": "user.phone",
+    "email_source": "user.email",
+    "update_fields": [
+      "name",
+      "phone",
+      "email"
+    ],
+    "update_only_from_nonempty_validated_source_fields": true,
+    "missing_name_or_tg_username": "Do not erase or degrade an existing name; report the missing source field.",
+    "contact_conflict": "Do not overwrite automatically; stop and report the conflicting YCLIENTS matches."
+  },
+  "sale_selection": {
+    "use_every_row_returned_for_the_requested_period_or_flow": true,
+    "ignore_payment_confirmation": true,
+    "ignore_ifVozvrat_for_issuance": true
+  },
+  "existing_client_rule": "Never top up an existing subscription. If any subscription/card exists in complete YCLIENTS network history, skip the sale without changing the client. An existing client may receive a new subscription only after complete network history proves zero prior subscriptions; without that proof, stop for manual review.",
+  "existing_subscription_rule": "Do not change balance or period. Skip and report existing subscription history.",
+  "exhausted_subscription_rule": "Do not top up. Skip and report existing subscription history.",
+  "expired_subscription_rule": "Do not change or issue automatically; skip and report existing subscription history.",
+  "multiple_exhausted_rule": "Do not top up. Skip and report existing subscription history.",
+  "multiple_positive_balance_rule": "Do not top up. Skip and report existing subscription history.",
+  "missing_subscription_rule": "Issue the approved type only when complete network history proves the client has zero prior subscriptions. A missing matching type is not sufficient when any other card/subscription exists.",
+  "new_subscription_expiration": {
+    "ordinary_types": "Set expiration from userCourse.gracePeriodEndDate; if missing or not in the future, do nothing and report.",
+    "package_types": "Do not set or change expiration; keep the validity configured in the YCLIENTS subscription type.",
+    "direct_command_without_sale": "For ordinary types ask the user for expiration before writing; package types need no expiration input."
+  },
+  "unknown_course_rule": "Stop and report as an exception; never infer another YCLIENTS type.",
+  "idempotency": {
+    "enabled": true,
+    "sale_operation_key": "purchaseID + target_subscription_type",
+    "partial_success_tracking": true
+  },
+  "conservative_exceptions": [
+    "missing phone or email",
+    "conflicting or multiple YCLIENTS client matches",
+    "source yclientsClientID conflicts with normalized phone or email",
+    "ordinary course with neither group nor personal quantity",
+    "any existing card/subscription history",
+    "existing client without complete proof of zero subscription history"
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "excluded_emails": [],
+  "telegram_overrides": {},
+  "notes": "Keep the real deployment policy outside Git. Values here are examples only."
+}
